@@ -57,8 +57,8 @@ def animate_watershed_scatter(ds):
         # add net runoff scatter
         ds.isel(t=frame).plot.scatter(
             ax = ax1,
-            x = 'downstream_prop',
-            y = 'ctd_net_runoff',
+            x = 'downstream_cells',
+            y = 'norm_net_runoff_watershed',
             color = c[0],
             marker = 'o',
             add_guide = False,
@@ -69,8 +69,8 @@ def animate_watershed_scatter(ds):
         # add soil storage scatter
         ds.isel(t=frame).plot.scatter(
             ax = ax1,
-            x = 'downstream_prop',
-            y = 'ctd_soil_storage',
+            x = 'downstream_cells',
+            y = 'norm_soil_watershed',
             color = c[1],
             marker = 'o',
             add_guide = False,
@@ -81,8 +81,8 @@ def animate_watershed_scatter(ds):
         # add et scatter
         ds.isel(t=frame).plot.scatter(
             ax = ax1,
-            x = 'downstream_prop',
-            y = 'ctd_et',
+            x = 'downstream_cells',
+            y = 'norm_et_watershed',
             color = c[2],
             marker = 'o',
             add_guide = False,
@@ -92,8 +92,8 @@ def animate_watershed_scatter(ds):
         
         # housekeeping
         ax1.set_ylim([-8,8])
-        ax1.set_ylabel('Cumulative Normalized Depth [mm per unit area]')
-        ax1.set_xlabel('Unburned Area Downstream of Fire [sq km]')
+        ax1.set_ylabel('Depth [mm per unit area]')
+        ax1.set_xlabel('Area Downstream of Fire [sq km]')
         ax1.set_title('')
         ax1.grid(False)
         ax1.spines['bottom'].set_color('k')
@@ -112,7 +112,7 @@ def animate_watershed_scatter(ds):
         ax2.fill_between(
             x = ds.t.values,
             y1 = 0,
-            y2 = ds.burned_swe.mean(dim=['group','sample']),
+            y2 = ds.swe_burned.mean(dim=['group','sample']),
             color = 'silver',
             alpha = 0.1
         )
@@ -120,7 +120,7 @@ def animate_watershed_scatter(ds):
         ax2.fill_between(
             x = ds.t.values,
             y1 = 0,
-            y2 = ds.unburned_swe.mean(dim=['group','sample']),
+            y2 = ds.swe_unburned.mean(dim=['group','sample']),
             color = 'silver',
             alpha = 0.1
         )
@@ -128,7 +128,7 @@ def animate_watershed_scatter(ds):
         ax2.fill_between(
             x = ds.isel(t=slice(None,frame)).t.values,
             y1 = 0,
-            y2 = ds.isel(t=slice(None,frame)).unburned_swe.mean(dim=['group','sample']),
+            y2 = ds.isel(t=slice(None,frame)).swe_unburned.mean(dim=['group','sample']),
             color = c[3],
             alpha = 0.4,
             label = 'Unburned'
@@ -137,10 +137,76 @@ def animate_watershed_scatter(ds):
         ax2.fill_between(
             x = ds.isel(t=slice(None,frame)).t.values,
             y1 = 0,
-            y2 = ds.isel(t=slice(None,frame)).burned_swe.mean(dim=['group','sample']),
+            y2 = ds.isel(t=slice(None,frame)).swe_burned.mean(dim=['group','sample']),
             color = c[5],
             alpha = 0.3,
             label = 'Burned'
+        )
+        
+        # add peak and melt markers
+        
+        if frame < dates.get_loc(ds.swe_burned.attrs['peak']):
+            mc = 'silver'
+            alph = 0.1
+        
+        else:
+            mc = c[5]
+            alph = 0.5
+            
+        ax2.scatter(
+            x = ds.swe_burned.attrs['peak'],
+            y = ds.swe_burned.mean(dim=['group','sample']).sel(t=ds.swe_burned.attrs['peak'])+60,
+            marker = 'v',
+            color = mc,
+            alpha = alph
+        )
+        
+        if frame < dates.get_loc(ds.swe_unburned.attrs['peak']):
+            mc = 'silver'
+            alph = 0.1
+        
+        else:
+            mc = c[3]
+            alph = 0.5
+        
+        ax2.scatter(
+            x = ds.swe_unburned.attrs['peak'],
+            y = ds.swe_unburned.mean(dim=['group','sample']).sel(t=ds.swe_unburned.attrs['peak'])+60,
+            marker = 'v',
+            color = mc,
+            alpha = alph
+        )
+        
+        if frame < dates.get_loc(ds.swe_burned.attrs['melted']):
+            mc = 'silver'
+            alph = 0.1
+        
+        else:
+            mc = c[5]
+            alph = 0.5
+        
+        ax2.scatter(
+            x = ds.swe_burned.attrs['melted'],
+            y = ds.swe_burned.mean(dim=['group','sample']).sel(t=ds.swe_burned.attrs['melted'])-60,
+            marker = '^',
+            color = mc,
+            alpha = alph
+        )
+        
+        if frame < dates.get_loc(ds.swe_unburned.attrs['melted']):
+            mc = 'silver'
+            alph = 0.1
+        
+        else:
+            mc = c[3]
+            alph = 0.5
+        
+        ax2.scatter(
+            x = ds.swe_unburned.attrs['melted'],
+            y = ds.swe_unburned.mean(dim=['group','sample']).sel(t=ds.swe_unburned.attrs['melted'])-60,
+            marker = '^',
+            color = mc,
+            alpha = alph
         )
         
         # housekeeping
@@ -162,7 +228,7 @@ def animate_watershed_scatter(ds):
         ax3.fill_between(
             x = ds.t.values,
             y1 = 0,
-            y2 = ds.mean_net_runoff.mean(dim=['group','sample']),
+            y2 = ds.net_runoff_watershed.mean(dim=['group','sample']),
             color = 'silver',
             alpha = 0.2
         )
@@ -170,7 +236,7 @@ def animate_watershed_scatter(ds):
         ax3.fill_between(
             x = ds.isel(t=slice(None,frame)).t.values,
             y1 = 0,
-            y2 = ds.isel(t=slice(None,frame)).mean_net_runoff.mean(dim=['group','sample']),
+            y2 = ds.isel(t=slice(None,frame)).net_runoff_watershed.mean(dim=['group','sample']),
             color = c[0],
             alpha = 0.5
         )
@@ -193,7 +259,7 @@ def animate_watershed_scatter(ds):
         ax4.fill_between(
             x = ds.t.values,
             y1 = 0,
-            y2 = ds.mean_soil_storage.mean(dim=['group','sample']),
+            y2 = ds.soil_watershed.mean(dim=['group','sample']),
             color = 'silver',
             alpha = 0.2
         )
@@ -201,7 +267,7 @@ def animate_watershed_scatter(ds):
         ax4.fill_between(
             x = ds.isel(t=slice(None,frame)).t.values,
             y1 = 0,
-            y2 = ds.isel(t=slice(None,frame)).mean_soil_storage.mean(dim=['group','sample']),
+            y2 = ds.isel(t=slice(None,frame)).soil_watershed.mean(dim=['group','sample']),
             color = c[1],
             alpha = 0.5
         )
@@ -224,7 +290,7 @@ def animate_watershed_scatter(ds):
         ax5.fill_between(
             x = ds.t.values,
             y1 = 0,
-            y2 = ds.mean_et.mean(dim=['group','sample']),
+            y2 = ds.et_watershed.mean(dim=['group','sample']),
             color = 'silver',
             alpha = 0.2
         )
@@ -232,7 +298,7 @@ def animate_watershed_scatter(ds):
         ax5.fill_between(
             x = ds.isel(t=slice(None,frame)).t.values,
             y1 = 0,
-            y2 = ds.isel(t=slice(None,frame)).mean_et.mean(dim=['group','sample']),
+            y2 = ds.isel(t=slice(None,frame)).et_watershed.mean(dim=['group','sample']),
             color = c[2],
             alpha = 0.5
         )
