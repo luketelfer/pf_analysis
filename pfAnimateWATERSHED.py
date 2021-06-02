@@ -53,6 +53,30 @@ def animate_watershed(ds):
             alpha = 0.5
         )
         
+        # add swe scatter
+        ds.isel(t=frame).plot.scatter(
+            ax = ax1,
+            x = 'downstream_cells',
+            y = 'norm_swe_watershed',
+            color = c[3],
+            marker = 'o',
+            add_guide = False,
+            alpha = 0.5,
+            label = 'SWE'
+        )
+        
+        # add et scatter
+        ds.isel(t=frame).plot.scatter(
+            ax = ax1,
+            x = 'downstream_cells',
+            y = 'norm_et_watershed',
+            color = c[2],
+            marker = 'o',
+            add_guide = False,
+            alpha = 0.5,
+            label = 'ET'
+        )
+        
         # add net runoff scatter
         ds.isel(t=frame).plot.scatter(
             ax = ax1,
@@ -77,18 +101,6 @@ def animate_watershed(ds):
             label = '$\Delta$ Soil Storage'
         )
         
-        # add et scatter
-        ds.isel(t=frame).plot.scatter(
-            ax = ax1,
-            x = 'downstream_cells',
-            y = 'norm_et_watershed',
-            color = c[2],
-            marker = 'o',
-            add_guide = False,
-            alpha = 0.5,
-            label = 'ET'
-        )
-        
         # housekeeping
         ax1.set_ylim([-12.5,12.5])
         ax1.set_ylabel('Depth [mm]')
@@ -100,6 +112,7 @@ def animate_watershed(ds):
         ax1.tick_params(bottom = False)
         ax1.set_xticks([0,300])
         ax1.set_yticks([-12,0,12])
+        ax1.legend(loc = 'lower center')
         
         #######################
         ### SWE TIME SERIES ###
