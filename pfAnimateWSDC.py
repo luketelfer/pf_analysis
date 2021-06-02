@@ -11,7 +11,7 @@ from matplotlib import style
 from matplotlib.ticker import MaxNLocator
 from datetime import datetime,timedelta
 matplotlib.rcParams['animation.embed_limit'] = 2**128
-style.use('fivethirtyeight')
+#style.use('fivethirtyeight')
 
 def animate_wsdc(ds):
     
@@ -91,15 +91,16 @@ def animate_wsdc(ds):
         )
         
         # housekeeping
-        ax1.set_ylim([-8,8])
-        ax1.set_ylabel('Depth [mm per unit area]')
-        ax1.set_xlabel('Area Downstream of Fire [sq km]')
+        ax1.set_ylim([-12.5,12.5])
+        ax1.set_ylabel('Depth [mm]')
+        ax1.set_xlabel('Fire Downstream Area [sq km]')
         ax1.set_title('')
-        ax1.grid(False)
-        ax1.spines['bottom'].set_color('k')
-        ax1.spines['bottom'].set_linewidth(1)
-        ax1.spines['left'].set_color('k')
-        ax1.spines['left'].set_linewidth(1)
+        ax1.spines['right'].set_visible(False)
+        ax1.spines['top'].set_visible(False)
+        ax1.tick_params(left = False)
+        ax1.tick_params(bottom = False)
+        ax1.set_xticks([0,300])
+        ax1.set_yticks([-12,0,12])
         
         #######################
         ### SWE TIME SERIES ###
@@ -114,7 +115,7 @@ def animate_wsdc(ds):
             y1 = 0,
             y2 = ds.swe_burned.mean(dim=['group','sample']),
             color = 'silver',
-            alpha = 0.1
+            alpha = 0.05
         )
         
         ax2.fill_between(
@@ -122,15 +123,15 @@ def animate_wsdc(ds):
             y1 = 0,
             y2 = ds.swe_unburned.mean(dim=['group','sample']),
             color = 'silver',
-            alpha = 0.1
+            alpha = 0.05
         )
         
         ax2.fill_between(
             x = ds.isel(t=slice(None,frame)).t.values,
             y1 = 0,
             y2 = ds.isel(t=slice(None,frame)).swe_unburned.mean(dim=['group','sample']),
-            color = c[3],
-            alpha = 0.4,
+            color = 'tab:grey',
+            alpha = 0.3,
             label = 'Unburned'
         )
         
@@ -138,8 +139,8 @@ def animate_wsdc(ds):
             x = ds.isel(t=slice(None,frame)).t.values,
             y1 = 0,
             y2 = ds.isel(t=slice(None,frame)).swe_burned.mean(dim=['group','sample']),
-            color = c[5],
-            alpha = 0.3,
+            color = c[3],
+            alpha = 0.5,
             label = 'Burned'
         )
         
@@ -147,10 +148,10 @@ def animate_wsdc(ds):
         
         if frame < dates.get_loc(ds.swe_burned.attrs['peak']):
             mc = 'silver'
-            alph = 0.1
+            alph = 0.05
         
         else:
-            mc = c[5]
+            mc = c[3]
             alph = 0.5
             
         ax2.scatter(
@@ -166,7 +167,7 @@ def animate_wsdc(ds):
             alph = 0.1
         
         else:
-            mc = c[3]
+            mc = 'tab:grey'
             alph = 0.5
         
         ax2.scatter(
@@ -179,10 +180,10 @@ def animate_wsdc(ds):
         
         if frame < dates.get_loc(ds.swe_burned.attrs['melted']):
             mc = 'silver'
-            alph = 0.1
+            alph = 0.05
         
         else:
-            mc = c[5]
+            mc = c[3]
             alph = 0.5
         
         ax2.scatter(
@@ -195,10 +196,10 @@ def animate_wsdc(ds):
         
         if frame < dates.get_loc(ds.swe_unburned.attrs['melted']):
             mc = 'silver'
-            alph = 0.1
+            alph = 0.05
         
         else:
-            mc = c[3]
+            mc = 'tab:grey'
             alph = 0.5
         
         ax2.scatter(
@@ -210,12 +211,18 @@ def animate_wsdc(ds):
         )
         
         # housekeeping
-        ax2.grid(False)
+        ax2.set_ylabel('SWE',rotation=0,loc='center')
+        ax2.legend(loc='center right')
         plt.setp(ax2.get_xticklabels(), visible=False)
         plt.setp(ax2.get_yticklabels(), visible=False)
-        ax2.set_ylabel('SWE',rotation=0)
-        ax2.legend(loc='upper right')
+        ax2.spines['top'].set_visible(False)
+        ax2.spines['bottom'].set_visible(False)
         ax2.spines['left'].set_visible(False)
+        ax2.spines['right'].set_visible(False)
+        ax2.tick_params(top = False)
+        ax2.tick_params(bottom = False)
+        ax2.tick_params(left = False)
+        ax2.tick_params(right = False)
         
         ##########################
         ### RUNOFF TIME SERIES ###
@@ -242,11 +249,17 @@ def animate_wsdc(ds):
         )
         
         # housekeeping
-        ax3.grid(False)
+        ax3.set_ylabel('Net\nRunoff',rotation=0,loc='center')
         plt.setp(ax3.get_xticklabels(), visible=False)
         plt.setp(ax3.get_yticklabels(), visible=False)
-        ax3.set_ylabel('Net\nRunoff',rotation=0)
+        ax3.spines['top'].set_visible(False)
+        ax3.spines['bottom'].set_visible(False)
         ax3.spines['left'].set_visible(False)
+        ax3.spines['right'].set_visible(False)
+        ax3.tick_params(top = False)
+        ax3.tick_params(bottom = False)
+        ax3.tick_params(left = False)
+        ax3.tick_params(right = False)
         
         ########################
         ### SOIL TIME SERIES ###
@@ -273,11 +286,17 @@ def animate_wsdc(ds):
         )
         
         # housekeeping
-        ax4.grid(False)
+        ax4.set_ylabel('$\Delta$ Soil\nStorage',rotation=0,loc='center')
         plt.setp(ax4.get_xticklabels(), visible=False)
         plt.setp(ax4.get_yticklabels(), visible=False)
-        ax4.set_ylabel('$\Delta$ Soil\nStorage',rotation=0)
+        ax4.spines['top'].set_visible(False)
+        ax4.spines['bottom'].set_visible(False)
         ax4.spines['left'].set_visible(False)
+        ax4.spines['right'].set_visible(False)
+        ax4.tick_params(top = False)
+        ax4.tick_params(bottom = False)
+        ax4.tick_params(left = False)
+        ax4.tick_params(right = False)
         
         ######################    
         ### ET TIME SERIES ###
@@ -304,10 +323,16 @@ def animate_wsdc(ds):
         )
 
         # housekeeping
-        ax5.grid(False)
+        ax5.set_ylabel('ET',rotation=0,loc='center')
         plt.setp(ax5.get_yticklabels(), visible=False)
-        ax5.set_ylabel('ET',rotation=0)
+        ax5.spines['top'].set_visible(False)
+        ax5.spines['bottom'].set_visible(False)
         ax5.spines['left'].set_visible(False)
+        ax5.spines['right'].set_visible(False)
+        ax5.tick_params(top = False)
+        ax5.tick_params(bottom = True)
+        ax5.tick_params(left = False)
+        ax5.tick_params(right = False)
         
         ##########################
         ### FINAL HOUSEKEEPING ###

@@ -11,14 +11,14 @@ from matplotlib import style
 from matplotlib.ticker import MaxNLocator
 from datetime import datetime,timedelta
 matplotlib.rcParams['animation.embed_limit'] = 2**128
-style.use('fivethirtyeight')
+#style.use('fivethirtyeight')
 
 def animate_budc(ds):
     
     # update style
     c = plt.rcParams['axes.prop_cycle'].by_key()['color']
     
-    style.use('seaborn-notebook')
+    #style.use('seaborn-notebook')
     
     # set up figure
     fig = plt.figure(tight_layout=True,figsize=[12,6])
@@ -95,12 +95,12 @@ def animate_budc(ds):
         ax0.set_ylim([-25,25])
         ax0.set_ylabel('Depth [mm per unit area]')
         ax0.set_title('Burned')
-        ax0.grid(False)
-        ax0.spines['bottom'].set_color('k')
-        ax0.spines['bottom'].set_linewidth(1)
-        ax0.spines['left'].set_color('k')
-        ax0.spines['left'].set_linewidth(1)
-        plt.setp(ax0.get_yticklabels(), visible=False)
+        #ax0.grid(False)
+        #ax0.spines['bottom'].set_color('k')
+        #ax0.spines['bottom'].set_linewidth(1)
+        #ax0.spines['left'].set_color('k')
+        #ax0.spines['left'].set_linewidth(1)
+        #plt.setp(ax0.get_yticklabels(), visible=False)
         
         ##############################
         ### UNBURNED SCATTER PLOTS ###
@@ -159,11 +159,11 @@ def animate_budc(ds):
         ax1.set_ylabel('Depth [mm per unit area]')
         ax1.set_xlabel('Area Downstream of Fire [sq km]')
         ax1.set_title('Unburned')
-        ax1.grid(False)
-        ax1.spines['bottom'].set_color('k')
-        ax1.spines['bottom'].set_linewidth(1)
-        ax1.spines['left'].set_color('k')
-        ax1.spines['left'].set_linewidth(1)
+        #ax1.grid(False)
+        #ax1.spines['bottom'].set_color('k')
+        #ax1.spines['bottom'].set_linewidth(1)
+        #ax1.spines['left'].set_color('k')
+        #ax1.spines['left'].set_linewidth(1)
         
         #######################
         ### SWE TIME SERIES ###
@@ -274,12 +274,12 @@ def animate_budc(ds):
         )
         
         # housekeeping
-        ax2.grid(False)
-        plt.setp(ax2.get_xticklabels(), visible=False)
-        plt.setp(ax2.get_yticklabels(), visible=False)
+        #ax2.grid(False)
+        #plt.setp(ax2.get_xticklabels(), visible=False)
+        #plt.setp(ax2.get_yticklabels(), visible=False)
         ax2.set_ylabel('SWE',rotation=0)
         ax2.legend(loc='upper right')
-        ax2.spines['left'].set_visible(False)
+        #ax2.spines['left'].set_visible(False)
         
         ##########################
         ### RUNOFF TIME SERIES ###
@@ -337,11 +337,11 @@ def animate_budc(ds):
         )
         
         # housekeeping
-        ax4.grid(False)
-        plt.setp(ax4.get_xticklabels(), visible=False)
-        plt.setp(ax4.get_yticklabels(), visible=False)
+        #ax4.grid(False)
+        #plt.setp(ax4.get_xticklabels(), visible=False)
+        #plt.setp(ax4.get_yticklabels(), visible=False)
         ax4.set_ylabel('$\Delta$ Soil\nStorage',rotation=0)
-        ax4.spines['left'].set_visible(False)
+        #ax4.spines['left'].set_visible(False)
         
         ######################    
         ### ET TIME SERIES ###
@@ -368,10 +368,10 @@ def animate_budc(ds):
         )
 
         # housekeeping
-        ax5.grid(False)
-        plt.setp(ax5.get_yticklabels(), visible=False)
+        #ax5.grid(False)
+        #plt.setp(ax5.get_yticklabels(), visible=False)
         ax5.set_ylabel('ET',rotation=0)
-        ax5.spines['left'].set_visible(False)
+        #ax5.spines['left'].set_visible(False)
         
         ##########################
         ### FINAL HOUSEKEEPING ###
@@ -382,11 +382,11 @@ def animate_budc(ds):
     anim = animation.FuncAnimation(
         fig,
         update,
-        frames = 365,
+        frames = 2,
         interval = 100,
         repeat = False
     )
     
-    plt.close()
+    plt.show()
     
     return anim
